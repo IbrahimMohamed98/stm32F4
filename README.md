@@ -4,20 +4,22 @@
 -The repo include 3 parts : 
 - Libs  (BitMath.h , Registers.h , stmTypes.h)                                
 - MCAL  (Which includes prepheral Drivers)
-- Core  (Which includes Core drivers)
+- Core  (Which includes Core drivers) 
 
 ## Repo content 
-   The repo contain the following drivers
-
-    *DIO
-    *UART
-    *SPI
-    *I2C
-    *SysTick
-    *NVIC
-    *EXTI
-    *RCC
-    *DMA
+   
+  DONE        | Module   
+:-------------|----------
+  &#10004;    | DIO      
+  &#10004;    | UART     
+  &#10004;    | SPI      
+  &#10006;    | I2C      
+  &#10004;    | SysTick  
+  &#10004;    | NVIC     
+  &#10004;    | EXTI     
+  &#10004;    | RCC      
+  &#10004;    | DMA
+  &#10006;   | TIMER
     
 
 
