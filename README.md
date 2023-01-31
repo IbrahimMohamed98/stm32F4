@@ -23,11 +23,19 @@
   &#10006;    | ADC
     
 
-
-
-
-
 ## API Reference
+
+#### RCC module
+
+```http
+header -> MCAL/Inc/RCC.h
+source -> MCAL/Src/RCC.c
+```
+| Function                   |  Description                   |
+| :-----------------------   |  :-----------------------------|
+| `RCC_initSystemClock`      |  *Initiate system clock source*|
+| `RCC_prephiralEnableClock` |  *Enables any prephiral clock* |
+| `RCC_prephiralDisableClock`|  *Disables any prephiral clock*|
 
 #### DIO module
 
@@ -64,13 +72,39 @@ header -> MCAL/Inc/UART.h
 source -> MCAL/Src/UART.c
 ```
 
-| Function                   |  Description                                         |
-| :--------                  |  :---------------------------------------------------|
-| `UART_init`                |  *Initiate  UART and configure it's attributes*   |
-| `UART_send`                |  *Sends a Byte over UART*                            |
-| `UART_receive`             |  *Recieve a Byte over UART*                          |
-| `UART_setReceiveCallBack`  |  *Sets the UART receive ISR functionality*           |
-| `UART_setSendCallBack`     |  *Sets the SPI send ISR functionality*               |
+| Function                   |  Description                                   |
+| :--------------------------|  :---------------------------------------------|
+| `UART_init`                |  *Initiate  UART and configure it's attributes*|
+| `UART_send`                |  *Sends a Byte over UART*                      |
+| `UART_receive`             |  *Recieve a Byte over UART*                    |
+| `UART_setReceiveCallBack`  |  *Sets the UART receive ISR functionality*     |
+| `UART_setSendCallBack`     |  *Sets the SPI send ISR functionality*         |
+
+
+#### DMA module
+
+```http
+header -> MCAL/Inc/DMA.h
+source -> MCAL/Src/DMA.c
+```
+| Function          | Description                        |
+| :-----------------| :----------------------------------|
+| `DMA_transferCnfg`| *Confiqure a transfer for the DMA* |
+
+#### DMA module
+
+```http
+header -> MCAL/Inc/EXTI.h
+source -> MCAL/Src/EXTI.c
+```
+| Function          | Description         |
+| :-----------------| :-------------------|
+| `EXTI_init`       | *Initiate EXTI line*|
+| `EXTI_disableLine`| *Disable EXTI line* |
+| `EXTI_setPinding` | *Set EXTI line pending flag* |
+
+
+
 
 ## Author
 
