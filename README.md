@@ -1,111 +1,114 @@
-# stm32F4
--This repo includes BareMetal drivers for stm32F401cc prephirals according to the manual
+# STM32F401CC Bare-Metal Peripheral Drivers
 
--The repo include 3 parts : 
-- Libs  (BitMath.h , Registers.h , stmTypes.h)                                
-- MCAL  (Which includes prepheral Drivers)
-- Core  (Which includes Core drivers) 
+A layered, register-level **bare-metal Embedded C** driver suite for the **STM32F401CC** (ARM Cortex-M4), implemented directly from the STM32F4 reference manual without STM32 HAL dependencies.
 
-## Repo content 
-   
-  DONE        | Module   
-:-------------|----------
-  &#10004;    | DIO      
-  &#10004;    | UART     
-  &#10004;    | SPI      
-  &#10006;    | I2C      
-  &#10004;    | SysTick  
-  &#10004;    | NVIC     
-  &#10004;    | EXTI     
-  &#10004;    | RCC      
-  &#10004;    | DMA
-  &#10006;    | TIMER
-  &#10006;    | ADC
-    
+---
+
+## Architecture & Directory Structure
+
+```text
+stm32F4/
+├── Libs/              # Common bit manipulation, fixed-width types, and register maps
+│   ├── BitMath.h
+│   ├── Registers.h
+│   └── stmTypes.h
+├── Core/              # ARM Cortex-M4 core peripheral drivers
+│   ├── Inc/           # NVIC.h, SysTick.h
+│   └── Src/           # NVIC.c, SysTick.c
+└── MCAL/              # Microcontroller Abstraction Layer peripheral drivers
+    ├── Inc/           # RCC.h, DIO.h, EXTI.h, SPI.h, UART.h, DMA.h
+    └── Src/           # RCC.c, DIO.c, EXTI.c, SPI.c, UART.c, DMA.c
+```
+
+---
+
+## Driver Implementation Status
+
+| Layer | Module | Status |
+| :--- | :--- | :--- |
+| **Core** | `NVIC` (Nested Vectored Interrupt Controller) | Implemented |
+| **Core** | `SysTick` (System Timer) | Implemented |
+| **MCAL** | `RCC` (Reset & Clock Control) | Implemented |
+| **MCAL** | `DIO` (GPIO / Digital I/O) | Implemented |
+| **MCAL** | `EXTI` (External Interrupts) | Implemented |
+| **MCAL** | `UART` (Serial Communication) | Implemented |
+| **MCAL** | `SPI` (Serial Peripheral Interface) | Implemented |
+| **MCAL** | `DMA` (Direct Memory Access) | Implemented |
+| **MCAL** | `I2C`, `TIMER`, `ADC` | Planned |
+
+---
 
 ## API Reference
 
-#### RCC module
+### Core Drivers
 
-```http
-header -> MCAL/Inc/RCC.h
-source -> MCAL/Src/RCC.c
-```
-| Function                   |  Description                   |
-| :-----------------------   |  :-----------------------------|
-| `RCC_initSystemClock`      |  *Initiate system clock source*|
-| `RCC_prephiralEnableClock` |  *Enables any prephiral clock* |
-| `RCC_prephiralDisableClock`|  *Disables any prephiral clock*|
+#### NVIC — `Core/Inc/NVIC.h` · `Core/Src/NVIC.c`
+| Function | Description |
+| :--- | :--- |
+| `NVIC_init` | Initializes NVIC and configures interrupt priority grouping |
+| `NVIC_enableInterrupt` | Enables a specific Cortex-M4 / peripheral exception |
+| `NVIC_disableInterrupt` | Disables a specific exception |
+| `NVIC_setPinding` | Sets the pending flag for an exception |
+| `NVIC_clearPinding` | Clears the pending flag for an exception |
+| `NVIC_isActiveInterrupt` | Checks whether an exception is currently active |
+| `NVIC_setPriority` | Assigns priority level to an exception |
 
-#### DIO module
+#### SysTick — `Core/Inc/SysTick.h` · `Core/Src/SysTick.c`
+| Function | Description |
+| :--- | :--- |
+| `SysTick_init` | Initializes SysTick clock source (`AHB` or `AHB/8`) and interrupt mode |
+| `SysTick_delayMs` | Blocking millisecond delay using the SysTick counter |
+| `SysTick_setCallBack` | Registers a user callback function for the SysTick ISR |
 
-```http
-header -> MCAL/Inc/DIO.h
-source -> MCAL/Src/DIO.c
-```
+---
 
-| Function    |  Description                                         |
-| :--------   |  :---------------------------------------------------|
-| `DIO_init`  |  *Initiate certain pin to be either output or input* |
-| `DIO_write` |  *make a certain pin to be either HIGH or LOW output*|
-| `DIO_read`  |  *Reads a certain pin logic level either HIGH or LOW*|
-| `DIO_toggel`|  *Toggels a certain pin logic*                       |
+### MCAL Peripheral Drivers
 
-#### SPI module
+#### RCC — `MCAL/Inc/RCC.h` · `MCAL/Src/RCC.c`
+| Function | Description |
+| :--- | :--- |
+| `RCC_initSystemClock` | Initializes and selects the system clock source |
+| `RCC_prephiralEnableClock` | Enables clock gating for a target peripheral |
+| `RCC_prephiralDisableClock` | Disables clock gating for a target peripheral |
 
-```http
-header -> MCAL/Inc/SPI.h
-source -> MCAL/Src/SPI.c
-```
+#### DIO — `MCAL/Inc/DIO.h` · `MCAL/Src/DIO.c`
+| Function | Description |
+| :--- | :--- |
+| `DIO_init` | Configures a GPIO pin as input or output |
+| `DIO_write` | Drives a GPIO output pin HIGH or LOW |
+| `DIO_read` | Reads the logic level of an input pin |
+| `DIO_toggel` | Toggles the output state of a GPIO pin |
 
-| Function          |  Description                                         |
-| :--------         |  :---------------------------------------------------|
-| `SPI_init`        |  *Initiate  SPI to be either MASTER or SLAVE*     |
-| `SPI_send`        |  *Sends a Byte over SPI*                             |
-| `SPI_receive`     |  *Recieve a Byte over SPI*                           |
-| `SPI_setCallBack` |  *Sets the SPI ISR functionality*                    |
+#### EXTI — `MCAL/Inc/EXTI.h` · `MCAL/Src/EXTI.c`
+| Function | Description |
+| :--- | :--- |
+| `EXTI_init` | Initializes and configures an external interrupt line |
+| `EXTI_disableLine` | Disables an external interrupt line |
+| `EXTI_setPinding` | Triggers/sets the pending flag for an EXTI line |
 
-#### UART module
+#### SPI — `MCAL/Inc/SPI.h` · `MCAL/Src/SPI.c`
+| Function | Description |
+| :--- | :--- |
+| `SPI_init` | Initializes SPI in Master or Slave mode |
+| `SPI_send` | Transmits a byte over SPI |
+| `SPI_receive` | Receives a byte over SPI |
+| `SPI_setCallBack` | Registers a callback function for the SPI ISR |
 
-```http
-header -> MCAL/Inc/UART.h
-source -> MCAL/Src/UART.c
-```
+#### UART — `MCAL/Inc/UART.h` · `MCAL/Src/UART.c`
+| Function | Description |
+| :--- | :--- |
+| `UART_init` | Initializes UART baud rate and frame parameters |
+| `UART_send` | Transmits a byte over UART |
+| `UART_receive` | Receives a byte over UART |
+| `UART_setReceiveCallBack` | Registers a callback for the UART RX interrupt |
+| `UART_setSendCallBack` | Registers a callback for the UART TX interrupt |
 
-| Function                   |  Description                                   |
-| :--------------------------|  :---------------------------------------------|
-| `UART_init`                |  *Initiate  UART and configure it's attributes*|
-| `UART_send`                |  *Sends a Byte over UART*                      |
-| `UART_receive`             |  *Recieve a Byte over UART*                    |
-| `UART_setReceiveCallBack`  |  *Sets the UART receive ISR functionality*     |
-| `UART_setSendCallBack`     |  *Sets the SPI send ISR functionality*         |
+#### DMA — `MCAL/Inc/DMA.h` · `MCAL/Src/DMA.c`
+| Function | Description |
+| :--- | :--- |
+| `DMA_transferCnfg` | Configures a memory/peripheral DMA transfer |
 
-
-#### DMA module
-
-```http
-header -> MCAL/Inc/DMA.h
-source -> MCAL/Src/DMA.c
-```
-| Function          | Description                        |
-| :-----------------| :----------------------------------|
-| `DMA_transferCnfg`| *Confiqure a transfer for the DMA* |
-
-#### DMA module
-
-```http
-header -> MCAL/Inc/EXTI.h
-source -> MCAL/Src/EXTI.c
-```
-| Function          | Description         |
-| :-----------------| :-------------------|
-| `EXTI_init`       | *Initiate EXTI line*|
-| `EXTI_disableLine`| *Disable EXTI line* |
-| `EXTI_setPinding` | *Set EXTI line pending flag* |
-
-
-
+---
 
 ## Author
-
-- [@IbrahimMohamed98](https://www.github.com/IbrahimMohamed98)
+**Ibrahim Bashar** — [LinkedIn](https://www.linkedin.com/in/ibrahimbashar98/) · [GitHub](https://github.com/IbrahimMohamed98)
